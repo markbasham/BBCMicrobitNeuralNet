@@ -1,8 +1,7 @@
 # Imports go at the top
 from microbit import *
-import netbit as nb
+import netbit
 import time
-import radio
 
 display.show('')
 timeout = 10
@@ -18,47 +17,16 @@ while time_count < timeout :
     time_count += 1
     time.sleep(1)
 
-if controller:
-    display.show(Image.PACMAN)
-else:
-    display.show(Image.GHOST)
-
-time.sleep(10)
-
-time_count = 0
-while time_count < 2:
-    display.scroll('SN:')
-    display.scroll(nb.get_serial_number())
-    print(nb.get_serial_number()
-    time_count += 1
-
-
-radio.config(group=23)
-radio.on()
-
-time_count = 0
-
-name_list = ['go']
+node = None
 
 if controller:
-    while time_count < 2:
-        display.show(time_count)
-        radio.send('rollcall')#+':'.join(name_list))
-        reply_time = 0
-        time.sleep_ms(400)
-        reply_time = 400
-        while reply_time < 1000:
-            message = radio.receive()
-            if message != '':
-                name_list.append(message)
-            time.sleep_ms(10)
-            reply_time += 10
+    node = netbit.NetController()
 else:
-    display.show(Image.GHOST)
-    while True:
-        message = radio.receive()
-        if message == 'rollcall':
-            display.show(Image.HAPPY)
-            time.sleep_ms(500)
-            radio.send(nb.get_serial_number())
+    node = netbit.NetNeuron()
+
+time.sleep(2)
+
+node.rollcall()
+
+time.sleep(100)
 
